@@ -36,9 +36,6 @@ linux_compilers = [
     "gcc-7",
 ]
 
-# Clang 3.4 and GCC 4.6 are already installed by default.
-linux_default_clang = "clang-3.4"
-
 osx_compilers = [
      "", # Don't set CC.'
 ]
@@ -166,7 +163,7 @@ def format_entry(os, target, compiler, rust, mode, features):
         packages = []
         sources = []
 
-    cc = get_cc(sys, compiler)
+    cc = compiler
 
     if os == "osx":
         os += "\n" + entry_indent + "osx_image: xcode9.3"
@@ -189,9 +186,7 @@ def format_entry(os, target, compiler, rust, mode, features):
             }
 
 def get_linux_packages_to_install(target, compiler, arch, kcov):
-    if compiler in ["", linux_default_clang]:
-        packages = []
-    elif compiler.startswith("clang-") or compiler.startswith("gcc-"):
+    if compiler.startswith("clang-") or compiler.startswith("gcc-"):
         packages = [compiler]
     else:
         packages = []
@@ -245,12 +240,6 @@ def get_sources_for_package(package):
         return [llvm_toolchain, ubuntu_toolchain]
     else:
         return [ubuntu_toolchain]
-
-def get_cc(sys, compiler):
-    if sys == "linux" and compiler == linux_default_clang:
-        return "clang"
-
-    return compiler
 
 def main():
     # Make a backup of the file we are about to update.
